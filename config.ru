@@ -5,6 +5,7 @@ Bundler.require
 
 require 'sinatra'
 require 'sinatra/reloader'
+require 'sinatra/json'
 require 'httparty'
 require 'pry'
 

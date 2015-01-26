@@ -25,17 +25,31 @@ module Github
 		CLIENT_ROOT_URL = 'https://api.github.com/user'
 
 		def self.fetch_user(token)
-			result = HTTParty.get(
+			user = HTTParty.get(
 				CLIENT_ROOT_URL,
 				query: { access_token: token }
 			)
-			fetch_all_repos(result)
+			return user
 		end
 
-		def self.fetch_all_repos(user)
-			repos = HTTParty.get(user['repos_url'])
+		def self.fetch_all_repos(url)
+			repos = HTTParty.get(url)
 			user_repos = filter_own_repos(repos)
-			return { account: user, repos: user_repos }
+			return parsed_repos_for_d3(user_repos)
+		end
+
+		def self.parsed_repos_for_d3(user_repos)
+			repo_json = { name: 'repos', children: [] }
+			own_repo_json = parse_for_name_and_size(user_repos[:own_repos])
+			forked_repo_json = parse_for_name_and_size(user_repos[:forked_repos])
+			own_repo_child = { name: 'own repos', children: own_repo_json }
+			forked_repo_child = { name: 'forked repos', children: forked_repo_json }
+			repo_json[:children].push(own_repo_child, forked_repo_child)
+			return repo_json
+		end
+
+		def self.parse_for_name_and_size(repos)
+			return repos.map { |repo|  { name: repo['name'], size: repo['size'] } }
 		end
 
 		private

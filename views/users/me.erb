@@ -15,15 +15,15 @@
 <div id='repos'>
 	<p>Number of Public Repositories: <%= @client['public_repos'] %></p>
 	<section id='own' class='repos'>
-		<% @repos[:own_repos].each do |repo| %>
-			<%= erb :'users/repo', locals: { repo: repo} %>
-		<% end %>
+		<%# @repos[:own_repos].each do |repo| %>
+			<%#= erb :'users/repo', locals: { repo: repo} %>
+		<%# end %>
 	</section>
 	<section id='forked' class='repos'>
-		<% @repos[:forked_repos].each do |repo| %>
-			<%= erb :'users/repo', locals: { repo: repo} %>
-		<% end %>
+		<%# @repos[:forked_repos].each do |repo| %>
+			<%#= erb :'users/repo', locals: { repo: repo} %>
+		<%# end %>
 	</section>
 </div>
-<%= @repos[:own_repos][0].keys %>
+<%#= @repos[:own_repos][0].keys %>
 

@@ -9,6 +9,8 @@ module Githubalyzer
 			def authenticated?
 				!!session[:access_token]
 			end
+
+			Sinatra::JSON
 		end
 	end
 

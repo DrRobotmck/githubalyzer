@@ -7,9 +7,14 @@ module Githubalyzer
 
 			get '/me' do
 				user = Github::Client.fetch_user(session[:access_token])
-				@client = user[:account]
-				@repos = user[:repos]
+				session[:user_repos_url] = user['repos_url']
+				@client = user
 				erb :'users/me'
+			end
+
+			get '/get_repo_json' do
+				parsed_repos = Github::Client.fetch_all_repos(session[:user_repos_url])
+				json parsed_repos
 			end
 
 			get '/repos/:user/:repo' do
