@@ -1,0 +1,29 @@
+<%= erb :'main/header' %>
+
+<h1><%= @client['login'] %></h1>
+
+<p><%= @client['name'] %> <%= '| ' + @client['company'] if @client['company'] %></p>
+<p><%= @client['location']  %></p>
+
+<p>Github Member since: <%= Date.parse(@client['created_at']).strftime("%b %d, %Y") %></p>
+
+<p> Followers: <%= @client['followers'] %></p>
+<p> Followers: <%= @client['following'] %></p>
+<img src="<%= @client['avatar_url'] %>" alt="">
+
+
+<div id='repos'>
+	<p>Number of Public Repositories: <%= @client['public_repos'] %></p>
+	<section id='own' class='repos'>
+		<% @repos[:own_repos].each do |repo| %>
+			<%= erb :'users/repo', locals: { repo: repo} %>
+		<% end %>
+	</section>
+	<section id='forked' class='repos'>
+		<% @repos[:forked_repos].each do |repo| %>
+			<%= erb :'users/repo', locals: { repo: repo} %>
+		<% end %>
+	</section>
+</div>
+<%= @repos[:own_repos][0].keys %>
+

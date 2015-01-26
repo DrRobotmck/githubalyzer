@@ -1,0 +1,9 @@
+<h3><%= repo['name'] %></h3>
+<p><%= repo['description'] %></p>
+<a href="<%= repo['html_url'] %>">view on github</a>
+<a href="/repos/<%= repo['full_name'] %>">endpoint</a>
+
+<p>Created: <%= Date.parse(repo['created_at']).strftime("%b %d, %Y") %> </p>
+<p>Size: <%= repo['size'] %> bytes</p>
+<p>Main Language: <%= repo['language'] %></p>
+
