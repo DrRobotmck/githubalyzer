@@ -74,7 +74,8 @@ module Github
 			parsed_repo = {
 				languages: parsed_languages,
 				commits: parsed_commits,
-				commits_metadata: commits_metadata
+				commits_metadata: commits_metadata,
+				repo_meta_data: repo_meta_data
 			}
 		end
 
@@ -104,7 +105,19 @@ module Github
 		end
 
 		def self.parse_meta_data(repo)
-			binding.pry
+			meta_data = {
+				owner: repo['owner']['login'],
+				owner_url: repo['owner']['html_url'],
+				name: repo['name'],
+				description: repo['description'],
+				size: repo['size'],
+				watchers_count: repo['watchers_count'],
+				forks: repo['forks'],
+				created: repo['created_at'],
+				last_push: repo['updated_at'],
+				url: repo['html_url']
+			}
+			return meta_data
 		end
 
 	end

@@ -16,6 +16,7 @@ module Githubalyzer
 				user = params[:user]
 				repo_name = params[:repo]
 				repo = Github::RepoParser.fetch_single_repo(user, repo_name)
+				binding.pry
 			end
 
 		end
