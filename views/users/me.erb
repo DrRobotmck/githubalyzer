@@ -11,19 +11,15 @@
 <p> Followers: <%= @client['following'] %></p>
 <img src="<%= @client['avatar_url'] %>" alt="">
 
-
 <div id='repos'>
 	<p>Number of Public Repositories: <%= @client['public_repos'] %></p>
 	<section id='own' class='repos'>
-		<%# @repos[:own_repos].each do |repo| %>
-			<%#= erb :'users/repo', locals: { repo: repo} %>
-		<%# end %>
+	<h1>Personal Repos</h1>
 	</section>
 	<section id='forked' class='repos'>
-		<%# @repos[:forked_repos].each do |repo| %>
-			<%#= erb :'users/repo', locals: { repo: repo} %>
-		<%# end %>
+	<h1>Forked Repos</h1>
 	</section>
 </div>
-<%#= @repos[:own_repos][0].keys %>
 
+<!-- d3 script for repos -->
+<script src='/javascripts/d3Files/reposD3.js'></script>

@@ -40,16 +40,16 @@ module Github
 
 		def self.parsed_repos_for_d3(user_repos)
 			repo_json = { name: 'repos', children: [] }
-			own_repo_json = parse_for_name_and_size(user_repos[:own_repos])
-			forked_repo_json = parse_for_name_and_size(user_repos[:forked_repos])
+			own_repo_json = parse_for_data(user_repos[:own_repos])
+			forked_repo_json = parse_for_data(user_repos[:forked_repos])
 			own_repo_child = { name: 'own repos', children: own_repo_json }
 			forked_repo_child = { name: 'forked repos', children: forked_repo_json }
 			repo_json[:children].push(own_repo_child, forked_repo_child)
 			return repo_json
 		end
 
-		def self.parse_for_name_and_size(repos)
-			return repos.map { |repo|  { name: repo['name'], size: repo['size'] } }
+		def self.parse_for_data(repos)
+			return repos.map { |repo|  { name: repo['name'], size: repo['size'], language: repo['language'], created_at: repo['created_at'] } }
 		end
 
 		private

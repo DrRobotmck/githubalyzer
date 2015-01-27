@@ -10,6 +10,7 @@ module Githubalyzer
 				!!session[:access_token]
 			end
 
+			# Add json support
 			Sinatra::JSON
 		end
 	end
