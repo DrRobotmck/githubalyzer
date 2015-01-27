@@ -1,12 +1,22 @@
   (function() {
-    var diameter = 400;
+    $(function(){
+      $(document).tooltip({
+        track: true,
+        position: {
+          my: 'left top+20 center',
+          at: 'right center'
+        },
+        content: function() { return $(this).attr('title'); }
+      });
+    })
+    var diameter = document.body.clientWidth * .9;
 
     var bubble = d3.layout.pack()
-    .sort(function(a, b) {
-      return Date.parse(b.created) - Date.parse(a.created);
-    })
-    .size([diameter, diameter])
-    .padding(1.5);
+                   .sort(function(a, b) {
+                      return Date.parse(b.created) - Date.parse(a.created);
+                    })
+                    .size([diameter, diameter * .8])
+                    .padding(1.5);
 
 
     d3.json("/get_repo_json", function(error, root) {
@@ -23,35 +33,79 @@
       addRepo(root.children[0], svgOwn);
       addRepo(root.children[1], svgFork);
 
-      function addRepo(whichRepos, svg) {
-        var node = svg.selectAll(".node")
-                  .data(bubble.nodes(repos(whichRepos))
-                    .filter(function(d) { return !d.children; }))
-                  .enter().append("g")
-                  .attr("class", "node")
-                  .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+    function addRepo(whichRepos, svg) {
+      var node = svg.selectAll(".node")
+                .data(bubble.nodes(repos(whichRepos))
+                  .filter(function(d) { return !d.children; }))
+                .enter().append("g")
+                .attr("class", "node")
+                .attr("transform", function(d) { return "translate(" + (d.x * 1) + "," + (d.y * 1) + ")"; });
 
-        node.append("title")
-            .text(function(d) { return [
-              d.repoName.toUpperCase(),
-              d.language || 'no language specified',
-              d.value + ' bytes' || 'n/a'
-            ].join(' | '); });
+      var defs = node.append('svg:defs');
+      var gradient = defs.append('svg:radialGradient')
+          .attr('id', function(a,b) {
+            return 'gradient_' + b
+          })
+          .attr('fy', '10%')
+          .attr('fx', '35%');
 
-        node.append("circle")
-            .attr('r', 0).transition()
-            .attr("r", function(d) { return d.r; })
-            .style('text-align', 'center')
-            .style("fill", function(d) {
-              return languageColor(d.language);
-            });
+      gradient.append('svg:stop')
+              .attr('offset', '0%')
+              .attr('stop-color', 'rgba(255,255,255,.9)')
+              .attr('stop-opacity', .9);
 
-        node.append("text")
-            .attr("dy", ".3em")
-            .style("text-anchor", "middle")
-            .text(function(d) { return d.repoName.substring(0, 1).toUpperCase(); });
-      }
+      gradient.append('svg:stop')
+              .attr('offset', '100%')
+              .attr('stop-color', function(d) { return languageColor(d.language) })
+              .attr('stop-opacity', .8);
+
+      node.attr('title', function(d) { return [
+            d.repoName.toUpperCase(),
+            '<br/>',
+            d.language || 'no language specified',
+            '<br/>',
+            d.value + ' bytes' || 'n/a',
+          ].join('\n'); });
+
+      var filter = defs.append('filter')
+          .attr('id', function(a,b) { return 'blur_' + b })
+          .attr('width', '120%')
+          .attr('height', '120%');
+
+      filter.append('feOffset')
+            .attr('result', 'offOut')
+            .attr('in', 'SourceAlpha')
+            .attr('dx', 1)
+            .attr('dy', 3);
+
+      filter.append('feColorMatrix')
+            .attr('result',"matrixOut")
+            .attr('in',"SourceGraphic")
+            .attr( "type","matrix")
+            .attr('values',"0.2 0 0 0 0 0 0.2 0 0 0 0 0 0.2 0 0 0 0 0 1 0");
+
+      filter.append('feGaussianBlur')
+            .attr('result', 'blurOut')
+            .attr('in', 'offOut')
+            .attr('stDeviation', 10);
+
+      filter.append('feBlend')
+            .attr('in', 'SourceGraphic')
+            .attr('in2', 'blurOut')
+            .attr('mode', 'normal');
+
+      node.append("circle")
+          .attr('r', 0).transition()
+          .attr("r", function(d) { return d.r * 1; })
+          .style('text-align', 'center')
+          .style("fill", function(a, b) { return 'url(#gradient_'+ b +')' })
+          .style('filter',function(a, b) { return 'url(#blur_'+ b +')' })
+          .style("box-shadow", "5px 5px 5px rgba(0,0,0,1)");
+
+    }
+
     });
+    d3.select(self.frameElement).style("height", diameter + "px");
 
     function repos(root) {
       var repos = [];
@@ -66,16 +120,15 @@
       return {children: repos};
     }
 
-    d3.select(self.frameElement).style("height", diameter + "px");
-
     function languageColor(language) {
-      if (language == undefined) {
+      console.log(language)
+      if (language == null) {
         return 'paleturquoise';
       }
       colors = {
-        "JavaScript": 'gold',
+        "JavaScript": 'yellow',
         "Java": 'navajowhite',
-        "Ruby": 'indianred',
+        "Ruby": 'firebrick',
         "C":'lightgreen',
         "CSS":'deepskyblue',
         "PHP":'slateblue',

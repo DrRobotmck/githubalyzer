@@ -1,16 +1,17 @@
 module Github
 
+	CLIENT_ID = ENV['GITHUB_CLIENT_ID']
+	CLIENT_SECRET = ENV['GITHUB_CLIENT_SECRET']
+
 	module Auth
 		AUTH_ROOT_URL = 'https://github.com/login/oauth/access_token'
-		CLIENT_ID = ENV['GITHUB_CLIENT_ID']
-		CLIENT_SECRET = ENV['GITHUB_CLIENT_SECRET']
 
 		def self.get_access_token(code)
 			result = HTTParty.post(
 				AUTH_ROOT_URL,
 				body: {
-					client_id: CLIENT_ID,
-					client_secret: CLIENT_SECRET,
+					client_id: Github::CLIENT_ID,
+					client_secret: Github::CLIENT_SECRET,
 					code: code,
 					accept: :json
 				}
@@ -33,7 +34,7 @@ module Github
 		end
 
 		def self.fetch_all_repos(url)
-			repos = HTTParty.get(url)
+			repos = HTTParty.get(url + '?client_id=' + Github::CLIENT_ID + '&client_secret=' + Github::CLIENT_SECRET)
 			user_repos = filter_own_repos(repos)
 			return parsed_repos_for_d3(user_repos)
 		end
