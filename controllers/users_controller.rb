@@ -15,7 +15,7 @@ module Githubalyzer
 			get '/get_repo_json' do
 				p session[:user_repos_url]
 				# parsed_repos = Github::Client.fetch_all_repos(session[:user_repos_url])
-				parsed_repos = Github::Client.fetch_all_repos('https://api.github.com/users/DrRobotmck/repos')
+				parsed_repos = Github::Client.fetch_all_repos('https://api.github.com/users/thoughtbot/repos')
 				json parsed_repos
 			end
 
